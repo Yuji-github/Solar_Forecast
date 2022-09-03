@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 '''Data Checking'''
 # Between 2022-03-29 and 2022-06-28
-df = pd.read_csv("DATA_SCIENCE_SAMPLE_DATA_PostCode_5000.csv")  # PS: 5000 = Adelade (Australia)
+df = pd.read_csv("DATA_SCIENCE_SAMPLE_DATA_PostCode_5000.csv")  # PS: 5000 = Adelaide (Australia)
 time = [val.split("T") for val in df["__time"].to_list()]  # split time into "Date" and Time
 df["Date"] = [row[0] for row in time]  # adding date to df
 df["Time"] = [row[1].replace(":00.000Z", "") for row in time]  # adding time to df original (12:00:00.000Z) -> 12:00
