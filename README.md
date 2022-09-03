@@ -3,3 +3,9 @@ Our climate is changing every single day because we consume more fuel since we h
 
 ### 2.Dependecy 
 - Python
+
+### 3.Data Analysis: Post Code 5000 Data Set
+<p align="center">
+<img src="src/avg_pv_hour.png" alt="average generating PV" title="Avg: PV" height="256" width="300">
+<p>
+Between 9 p.m. and 7 a.m., PV is generated. On the other hand, in the daytime (8 a.m. to 8 p.m.), PV is not generated for 3 months on average. So, we can assume that PV measures solar panels and storage. In the daytime, the solar panels generate electricity. After sunset, the generated power goes to the storage. That's why the PV is going up at night.
