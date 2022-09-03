@@ -12,12 +12,12 @@ df = df.drop(["__time"], axis=1)  # drop unnecessary colum
 df = df.sort_values(by=['Date', 'Time'])  # sort by Date and Time
 df = df.reset_index(drop=True)  # reset the index num
 
-# df.groupby("Hour").mean().plot(kind="line")
-# plt.title("Average: PV Per Day")
-# plt.ylabel("Solar Generation")
-# plt.xticks(range(0, 24, 1))
-# # plt.savefig("src/avg_pv_hour.png")
-# plt.show()
+df.groupby("Hour").mean().plot(kind="line")
+plt.title("Average: PV Per Day")
+plt.ylabel("Solar Generation")
+plt.xticks(range(0, 24, 1))
+# # plt.savefig("src/avg_pv_hour.png")  # saving image
+plt.show()
 
 '''Shifting Time 12 Hours'''
 for itr, val in enumerate(df["Time"].to_list()):
@@ -32,5 +32,5 @@ df.groupby("Hour").mean().plot(kind="line")
 plt.title("Average: PV Per Day")
 plt.ylabel("Solar Generation")
 plt.xticks(range(0, 24, 1))
-# plt.savefig("src/switched.png")
+# plt.savefig("src/switched.png")  # saving image
 plt.show()
