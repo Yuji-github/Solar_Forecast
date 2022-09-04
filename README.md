@@ -33,7 +33,13 @@ Correlation between PV and Time, Weather, and Temperature:
 
 From the above table, there is negatively strong relation between PV and Time.
 
-<img src="src/corr.png" alt="average generating PV" title="Avg: PV" height="256" width="300"><br>
-[More details]((https://www.researchgate.net/publication/334308527_Usefulness_of_Correlation_Analysis))
+<img src="src/corr.png" alt="corr" title="corr" height="300" width="300"><br>
+[More details](https://www.researchgate.net/publication/334308527_Usefulness_of_Correlation_Analysis)
 
 Thus, we add sunrise and sunset times in Adelaide between March and June into our dataset. To do so, we are able to calculate the solar elevation angles roughly. *In April, there is a time change in Adelaide.
+
+The solar elevation formula is as follows:<br>
+<p align="center">
+sin(ɑ) = sin(ɸ)sin(δ) + cos(ɸ)cos(δ)cos(h)
+<p>
+Where ɑ is the solar elevation angle, δ is the declination angle, ɸ is the latitude of your location, and h is the solar hour angle.
