@@ -93,4 +93,4 @@ times = df["Date"] + " " + df["Time"]  # to calculate the solar position in Adel
 angles = site.get_solarposition(times)  # calculates angles
 df["Zenith"] = angles["apparent_zenith"].values  # add to the original dataset
 
-df.to_csv('solar.csv')  # save the file for machin learning
+df.to_csv('solar.csv', index=False)  # save the file for machin learning
