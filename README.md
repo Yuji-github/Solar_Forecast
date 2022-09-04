@@ -3,6 +3,7 @@ Our climate is changing every single day because we consume more fuel since we h
 
 ### 2.Dependecy 
 - Python
+- pvlib
 
 ### 3.Data Analysis: Post Code 5000 Data Set
 <p align="center">
@@ -25,6 +26,12 @@ Between 11 am and 1 pm, we assume the temperature is max.<br>
 Between 2 and 4 pm, we assume the temperature is the same as at 3 am.<br>
 After 5 pm, we assume the temperature is min.<br>
 
+<p align="center">
+<img src="src/weather.png" alt="average generating PV by weather" title="weather: PV" height="256" width="300">
+<p>
+
+We compare PV generation to that of the sun and rain. From the above picture, we can see that rain drops are on the PV. In particular, around noon (peak) it is clearly different, but not much.  From this fact, we can assume the correlation values would be lower, and the table is below.
+
 Correlation between PV and Time, Weather, and Temperature: 
 
 |     | PV  | Time | Weather | Temperature |
@@ -36,10 +43,22 @@ From the above table, there is negatively strong relation between PV and Time.
 <img src="src/corr.png" alt="corr" title="corr" height="300" width="300"><br>
 [More details](https://www.researchgate.net/publication/334308527_Usefulness_of_Correlation_Analysis)
 
-Thus, we add sunrise and sunset times in Adelaide between March and June into our dataset. To do so, we are able to calculate the solar elevation angles roughly. *In April, there is a time change in Adelaide.
+Thus, we can say that PV and the Sun of the position matter. 
+We calculate the solar elevation angles to calculate Zenith angles. 
 
 The solar elevation formula is as follows:<br>
 <p align="center">
 sin(ɑ) = sin(ɸ)sin(δ) + cos(ɸ)cos(δ)cos(h)
 <p>
 Where ɑ is the solar elevation angle, δ is the declination angle, ɸ is the latitude of your location, and h is the solar hour angle.
+
+<img src="src/zenith.png" alt="solar zenith" title="solar zenith" height="200" width="350"><br>
+
+From the above picture, we can see that the solar zenith angle covers the surface of the solar panels. When the zenith angles are large such as around noon, the solar panels generate more PV.<br>
+Also,  the below correlation table shows that solar zentih angles are more related to PV than Time.
+
+|     | PV  | Time | Weather | Temperature | Zenith |
+|:---:| :---: | :---: | :---: | :---: | :---: |
+| PV  | 1.0 | -0.558 | -0.08 | -0.18 | -0.725 |
+
+We save the dataframe with Time, Temperature, Weather, and Zenith to apply machine learning.

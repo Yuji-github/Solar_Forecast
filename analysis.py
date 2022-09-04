@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from pvlib.location import Location
 
 '''Data Checking'''
 # Between 2022-03-29 and 2022-06-28
@@ -12,12 +13,12 @@ df = df.drop(["__time"], axis=1)  # drop unnecessary colum
 df = df.sort_values(by=['Date', 'Time'])  # sort by Date and Time
 df = df.reset_index(drop=True)  # reset the index num
 
-# df.groupby("Hour").mean().plot(kind="line")
-# plt.title("Average: PV Per Day")
-# plt.ylabel("Solar Generation")
-# plt.xticks(range(0, 24, 1))
-# # # plt.savefig("src/avg_pv_hour.png")  # saving image
-# plt.show()
+df.groupby("Hour").mean().plot(kind="line")
+plt.title("Average: PV Per Day")
+plt.ylabel("Solar Generation")
+plt.xticks(range(0, 24, 1))
+# plt.savefig("src/avg_pv_hour.png")  # saving image
+plt.show()
 
 '''Shifting Time 12 Hours'''
 for itr, val in enumerate(df["Time"].to_list()):
@@ -28,12 +29,12 @@ for itr, val in enumerate(df["Time"].to_list()):
     df.loc[itr, "Time"] = temp + val[2:]  # replace the hours
 df["Hour"] = pd.to_datetime(df["Time"]).dt.hour  # recalculate hours
 
-# df.groupby("Hour").mean().plot(kind="line")
-# plt.title("Average: PV Per Day")
-# plt.ylabel("Solar Generation")
-# plt.xticks(range(0, 24, 1))
-# # plt.savefig("src/switched.png")  # saving image
-# plt.show()
+df.groupby("Hour").mean().plot(kind="line")
+plt.title("Average: PV Per Day")
+plt.ylabel("Solar Generation")
+plt.xticks(range(0, 24, 1))
+# plt.savefig("src/switched.png")  # saving image
+plt.show()
 
 '''Import Weather Data'''
 march = pd.read_csv('march.csv', skiprows=7)
@@ -62,15 +63,34 @@ for date, hour, idx in zip(df["Date"].to_list(), df["Hour"].to_list(), range(len
     this_idx = int(date[8:10]) - 1
     if int(date[6]) == 3:
         val = temapture(march, hour, this_idx)
-        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'], df.loc[idx, 'Sunrise'], df.loc[idx, 'Sunset'] = val[0], val[1], 7, 19
+        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'] = val[0], val[1]
     elif int(date[6]) == 4:
         val = temapture(april, hour, this_idx)
-        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'], df.loc[idx, 'Sunrise'], df.loc[idx, 'Sunset'] = val[0], val[1], 6, 18
+        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'] = val[0], val[1]
     elif int(date[6]) == 5:
         val = temapture(may, hour, this_idx)
-        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'], df.loc[idx, 'Sunrise'], df.loc[idx, 'Sunset'] = val[0], val[1], 7, 17
+        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'] = val[0], val[1]
     elif int(date[6]) == 6:
         val = temapture(jun, hour, this_idx)
-        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'], df.loc[idx, 'Sunrise'], df.loc[idx, 'Sunset'] = val[0], val[1], 7, 17
+        df.loc[idx, 'Temp'], df.loc[idx, 'Rain'] = val[0], val[1]
 
-print(df)
+'''Comparing Sunny vs Rain '''
+sunny, rain = df[(df["Rain"] < 1)], df[~(df["Rain"] < 1)]
+sunny = sunny.drop(labels=['Time', "Temp"], axis=1)
+rain = rain.drop(labels=['Time', "Temp"], axis=1)
+
+sunny.groupby("Hour")["PV"].mean().plot(kind="line")
+rain.groupby("Hour")["PV"].mean().plot(kind="line", color="red")
+plt.legend(["Sunny", "Rain"])
+plt.title("Sunny vs Rain: PV Per Day")
+plt.ylabel("Solar Generation")
+# plt.savefig("src/weather.png")  # saving image
+plt.show()
+
+'''Calculating Solar Position (Zenith)'''
+site = Location(-34.92859, 138.59994, 'Etc/GMT+9', 50, 'Adelaide')  # latitude, longitude, time_zone, altitude, name
+times = df["Date"] + " " + df["Time"]  # to calculate the solar position in Adelaide
+angles = site.get_solarposition(times)  # calculates angles
+df["Zenith"] = angles["apparent_zenith"].values  # add to the original dataset
+
+df.to_csv('solar.csv')  # save the file for machin learning
