@@ -39,8 +39,10 @@ Correlation between PV and Time, Weather, and Temperature:
 | PV  | 1.0 | -0.558 | -0.08 | -0.18 | 
 
 From the above table, there is negatively strong relation between PV and Time.
+<p align="center">
+<img src="src/corr.png" alt="corr" title="corr" height="300" width="300">
+<p>
 
-<img src="src/corr.png" alt="corr" title="corr" height="300" width="300"><br>
 [More details](https://www.researchgate.net/publication/334308527_Usefulness_of_Correlation_Analysis)
 
 Thus, we can say that PV and the Sun of the position matter. 
@@ -51,9 +53,9 @@ The solar elevation formula is as follows:<br>
 sin(ɑ) = sin(ɸ)sin(δ) + cos(ɸ)cos(δ)cos(h)
 <p>
 Where ɑ is the solar elevation angle, δ is the declination angle, ɸ is the latitude of your location, and h is the solar hour angle.
-
-<img src="src/zenith.png" alt="solar zenith" title="solar zenith" height="200" width="350"><br>
-
+<p align="center">
+<img src="src/zenith.png" alt="solar zenith" title="solar zenith" height="200" width="350">
+<p>
 From the above picture, we can see that the solar zenith angle covers the surface of the solar panels. When the zenith angles are large such as around noon, the solar panels generate more PV.<br>
 Also,  the below correlation table shows that solar zentih angles are more related to PV than Time.
 
@@ -62,3 +64,28 @@ Also,  the below correlation table shows that solar zentih angles are more relat
 | PV  | 1.0 | -0.558 | -0.08 | -0.18 | -0.725 |
 
 We save the dataframe with Time, Temperature, Weather, and Zenith to apply machine learning.
+
+### 4.Machine Learning
+To predict the 7-day PV forecast, we split the dataset into train and test by date. So, the last 7 days (6/21-28) are on the test.
+Then, we explore outliers in the test dataset.
+<p align="center">
+<img src="src/outlier.png" alt="outlier" title="outlier" height="300" width="400">
+<p>
+
+From the above image, we do not see any outliers, so we do not apply any imputation at this stage. As we can see, there are different values on the x-axis in the picture, and we apply a standard scaler before machine learning.  
+For discovering the best model for the dataset, we consider  3 ensemble learnning; [RandomForest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html), [AdaBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html#sklearn.ensemble.AdaBoostRegressor), and [GradinetBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html#sklearn.ensemble.GradientBoostingRegressor) as our candidates.
+We also apply the [gridsearch method](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV) for our fine-tuning when cross validation is 5 and scoring is R Squared.
+We discover that the best model from them:  
+
+|                 Model                 | R2 | Params |  MSE  | RMSE  |
+|:-------------------------------------:|:---:|:------:|:-----:|:-----:|
+| RandomForestRegressor(random_state=0) | 0.64 | 'max_depth': 5, 'n_estimators': 100 | 2.21 | 1.49 |
+
+Our RMSE is 1.49, and we can expect that our error (of standard deviation ) is small. It is pretty accurate.
+Thus, we predict PV with the model and plot the below picture.
+
+<p align="center">
+<img src="src/result.png" alt="result" title="result" height="300" width="400">
+<p>
+
+The red line is our prediction, and the line is pretty similar. However, around 3 p.m., our prediction is different. There were some reasons why we could not predict it there. First, the rain and temperature were not precise as we covered the entire field. So, they are sort of noise. Second, we do not have enough columns to predict well. So, collecting more relevant data is our future study at this stage.
